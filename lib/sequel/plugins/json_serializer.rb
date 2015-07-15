@@ -290,6 +290,7 @@ module Sequel
           end
 
           if root = opts[:root]
+            root = opts[:instance_name] unless opts[:instance_name].nil?
             unless root.is_a?(String)
               root = model.send(:underscore, model.send(:demodulize, model.to_s))
             end
@@ -315,6 +316,9 @@ module Sequel
         #          wraps both the collection and instances in a root
         #          object.  If set to a string, wraps the collection in
         #          a root object using the string as the key.  
+        # :instance_name :: If configured to name instances, :instance_name 
+        #          allows the wrapped instance name to be set using the 
+        #          value as the key.
         def to_json(*a)
           if opts = a.first.is_a?(Hash)
             opts = model.json_serializer_opts.merge(a.first)

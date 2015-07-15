@@ -224,6 +224,12 @@ describe "Sequel::Plugins::JsonSerializer" do
     @album.to_json(:root=>"foo", :except => [:name, :artist_id]).to_s.must_equal '{"foo":{"id":1}}'
     @album.to_json(:root=>"bar", :only => :name).to_s.must_equal '{"bar":{"name":"RF"}}'
   end
+
+  it "should handle the :instance_name=>string option to set the name to qualify instances using the string as the key" do 
+    Album.dataset._fetch = [{:id=>1, :name=>'RF'}, {:id=>1, :name=>'RF'}]
+    Album.dataset.to_json(:root=>:instance, :only => :id, :instance_name=>"foo").to_s.must_equal '[{"foo":{"id":1}},{"foo":{"id":1}}]'
+    Album.dataset.to_json(:root=>:instance, :only => :id, :instance_name=>"bar").to_s.must_equal '[{"bar":{"id":1}},{"bar":{"id":1}}]'
+  end
   
   it "should handle the :root=>:both option to qualify a dataset of records" do
     Album.dataset._fetch = [{:id=>1, :name=>'RF'}, {:id=>1, :name=>'RF'}]
